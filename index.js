@@ -437,6 +437,28 @@ export default class Drawer extends Component {
     })
   };
 
+  closeNotAnimation = (type, cb) => {
+    let start = this._left
+    let end = this.getClosedLeft()
+
+    if (this._activeTween) return
+    if (type !== 'force' && start - end === 0 && this._open === false) return // do nothing if the delta is 0
+
+    this.props.onCloseStart && this.props.onCloseStart()
+    this.setInteractionHandle()
+	this._activeTween = null
+	this._open = false
+	this._prevLeft = this._left
+	this.adjustForCaptureGestures()
+	this.props.onClose()
+	this.clearInteractionHandle()
+
+	if(typeof type === 'function') {
+	  type() // this is actually a callback
+	} else cb && cb()
+
+  };
+
   adjustForCaptureGestures() {
     if (!this.props.captureGestures) return
     let shouldCapture = this.shouldCaptureGestures()
